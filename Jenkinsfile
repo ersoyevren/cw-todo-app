@@ -3,17 +3,17 @@ pipeline {
     tools {
         terraform 'terraform'
 }
+
     environment {
         PATH=sh(script:"echo $PATH:/usr/local/bin", returnStdout:true).trim()
         AWS_REGION = "us-east-1" 
         AWS_ACCOUNT_ID=sh(script:'export PATH="$PATH:/usr/local/bin" && aws sts get-caller-identity --query Account --output text', returnStdout:true).trim()
         ECR_REGISTRY="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
-        APP_REPO_NAME = "jenkins-repo/cw-todo-app"
+        APP_REPO_NAME = "clarusway-repo/cw-todo-app"
         APP_NAME = "todo"
     }
 
     stages {
-
         stage('Create Infrastructure for the App') {
             steps {
                 echo 'Creating Infrastructure for the App on AWS Cloud'
@@ -25,13 +25,14 @@ pipeline {
         stage('Create ECR Repo') {
             steps {
                 echo 'Creating ECR Repo for App'
-                sh """
+                sh '''
+                aws ecr describe-repositories --region ${AWS_REGION} --repository-name ${APP_REPO_NAME} || \
                 aws ecr create-repository \
                   --repository-name ${APP_REPO_NAME} \
                   --image-scanning-configuration scanOnPush=false \
                   --image-tag-mutability MUTABLE \
                   --region ${AWS_REGION}
-                """
+                '''
             }
         }
 
@@ -48,7 +49,7 @@ pipeline {
                 sh 'cat ./nodejs/server/.env'
                 sh 'envsubst < react-env-template > ./react/client/.env'
                 sh 'cat ./react/client/.env'
-                sh 'docker build --force-rm -t "$ECR_REGISTRY/$APP_REPO_NAME:postgr" -f ./postgresql/dockerfile-postgresql .'
+                sh 'docker build --force-rm -t "$ECR_REGISTRY/$APP_REPO_NAME:postgre" -f ./postgresql/dockerfile-postgresql .'
                 sh 'docker build --force-rm -t "$ECR_REGISTRY/$APP_REPO_NAME:nodejs" -f ./nodejs/dockerfile-nodejs .'
                 sh 'docker build --force-rm -t "$ECR_REGISTRY/$APP_REPO_NAME:react" -f ./react/dockerfile-react .'
                 sh 'docker image ls'
@@ -59,7 +60,7 @@ pipeline {
             steps {
                 echo 'Pushing App Image to ECR Repo'
                 sh 'aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin "$ECR_REGISTRY"'
-                sh 'docker push "$ECR_REGISTRY/$APP_REPO_NAME:postgr"'
+                sh 'docker push "$ECR_REGISTRY/$APP_REPO_NAME:postgre"'
                 sh 'docker push "$ECR_REGISTRY/$APP_REPO_NAME:nodejs"'
                 sh 'docker push "$ECR_REGISTRY/$APP_REPO_NAME:react"'
             }

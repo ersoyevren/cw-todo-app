@@ -96,7 +96,7 @@
   vars:
     postgre_container: /home/ec2-user/postgresql
     container_name: oliver_postgre
-    image_name: 829916382633.dkr.ecr.us-east-1.amazonaws.com/jenkins-repo/cw-todo-app:postgr
+    image_name: 829916382633.dkr.ecr.us-east-1.amazonaws.com/clarusway-repo/cw-todo-app:postgre
   tasks:
     - name: remove {{ container_name }} container and {{ image_name }} if exists
       shell: "docker ps -q --filter 'name={{ container_name }}' && docker stop {{ container_name }} && docker rm -fv {{ container_name }} && docker image rm -f {{ image_name }} || echo 'Not Found'"
@@ -119,7 +119,7 @@
   vars:
     container_path: /home/ec2-user/nodejs
     container_name: oliver_nodejs
-    image_name: 829916382633.dkr.ecr.us-east-1.amazonaws.com/jenkins-repo/cw-todo-app:nodejs
+    image_name: 829916382633.dkr.ecr.us-east-1.amazonaws.com/clarusway-repo/cw-todo-app:nodejs
   tasks:
     - name: remove {{ container_name }} container and {{ image_name }} if exists
       shell: "docker ps -q --filter 'name={{ container_name }}' && docker stop {{ container_name }} && docker rm -fv {{ container_name }} && docker image rm -f {{ image_name }} || echo 'Not Found'"
@@ -138,7 +138,7 @@
   vars:
     container_path: /home/ec2-user/react
     container_name: oliver_react
-    image_name: 829916382633.dkr.ecr.us-east-1.amazonaws.com/jenkins-repo/cw-todo-app:react
+    image_name: 829916382633.dkr.ecr.us-east-1.amazonaws.com/clarusway-repo/cw-todo-app:react
   tasks:
     - name: remove {{ container_name }} container and {{ image_name }} image if exists
       shell: "docker ps -q --filter 'name={{ container_name }}' && docker stop {{ container_name }} && docker rm -fv {{ container_name }} && docker image rm -f {{ image_name }} || echo 'Not Found'"
