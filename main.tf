@@ -21,7 +21,7 @@ variable "tags" {
 }
 
 variable "user" {
-  default = "ersoy"  
+  default = "ersoy"
 }
 
 resource "aws_instance" "managed_nodes" {
@@ -33,15 +33,15 @@ resource "aws_instance" "managed_nodes" {
   iam_instance_profile = "jenkins-project-profile-${var.user}"
   tags = {
     Name = "ansible_${element(var.tags, count.index )}"
-    stack = "ansible_project"
-    environment = "development"
+    stack = "ansible_project-1"
+    environment = "development_1"
   }
 }
 
 resource "aws_security_group" "tf-sec-gr" {
-  name = "project208-sec-gr"
+  name = "project208-sec-gr-adunc"
   tags = {
-    Name = "project208-sec-gr"
+    Name = "project208-sec-gr-adunc"
   }
 
   ingress {
